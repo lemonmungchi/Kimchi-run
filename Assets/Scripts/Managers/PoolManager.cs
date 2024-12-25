@@ -108,7 +108,19 @@ public class PoolManager
     /// 풀에 속한 모든 GameObject의 부모
     /// </summary>
     private Transform _root;
-    
+
+    /// <summary>
+    /// Pool의 최상위 루트를 반환
+    /// </summary>
+    public Transform GetRoot()
+    {
+        if (_root == null)
+        {
+            Init(); // _root가 초기화되지 않았으면 초기화
+        }
+        return _root;
+    }
+
     /// <summary>
     /// GameObject Pool들의 Root 컨테이너를 초기화하고, DontDestroyOnLoad로 Scene 전환시에도 유지되도록.
     /// </summary>
