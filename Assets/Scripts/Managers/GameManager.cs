@@ -70,14 +70,14 @@ public class GameManager
     public void SpawnRandomEnemy()
     {
         // 빌딩 프리팹이 비어 있는 경우 경고
-        if (_enemies == null || _spawnedEnemies.Count == 0)
+        if (_enemies == null || _enemies.Count == 0)
         {
             Debug.LogWarning("적 프리팹이 없습니다!");
             return;
         }
 
         // 랜덤 인덱스를 선택해 빌딩 프리팹 가져오기
-        int randomIndex = UnityEngine.Random.Range(0, _spawnedEnemies.Count);
+        int randomIndex = UnityEngine.Random.Range(0, _enemies.Count);
         GameObject prefab = _enemies[randomIndex];
 
         // 풀에서 빌딩 생성
