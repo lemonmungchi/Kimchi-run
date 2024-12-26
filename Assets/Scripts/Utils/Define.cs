@@ -50,7 +50,6 @@ public class Define
     }
     
     // 게임에 등장하는 GameObject를 구분하기 위한 열거형.
-    // 지금은 다음과 같이 플레이어와 몬스터만 구분한다.
     public enum WorldObject
     {
         Unknown,
@@ -58,6 +57,7 @@ public class Define
         _buildings,
         Enemy,
         food,
+        goldenfood,
     }
     
     // 지금 게임 세션이 새로운 게임인지, 저장된 데이터를 불러온 게임인지 구분하는 열거형.

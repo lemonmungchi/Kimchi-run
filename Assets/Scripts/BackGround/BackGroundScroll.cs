@@ -18,8 +18,8 @@ public class BackGroundScroll : MonoBehaviour
     
     void Update()
     {
-        meshRenderer[0].material.mainTextureOffset += new Vector2(scrollSpeed[0] * Time.deltaTime, 0);
-        meshRenderer[1].material.mainTextureOffset += new Vector2(scrollSpeed[1] * Time.deltaTime, 0);
-        meshRenderer[2].material.mainTextureOffset += new Vector2(scrollSpeed[2] * Time.deltaTime, 0);
+        meshRenderer[0].material.mainTextureOffset += new Vector2(scrollSpeed[0] * Managers.Game.CaculateGameSpeed() / 20 * Time.deltaTime, 0);
+        meshRenderer[1].material.mainTextureOffset += new Vector2(scrollSpeed[1] * Managers.Game.CaculateGameSpeed() / 20 * Time.deltaTime, 0);
+        meshRenderer[2].material.mainTextureOffset += new Vector2(scrollSpeed[2] * Managers.Game.CaculateGameSpeed() / 20 * Time.deltaTime, 0);
     }
 }

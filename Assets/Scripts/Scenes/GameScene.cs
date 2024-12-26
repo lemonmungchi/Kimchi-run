@@ -29,6 +29,16 @@ public class GameScene : BaseScene
         SpawnPlayer();
 
         Managers.UI.ShowSceneUI<UI_Game>();
+
+        // 스폰 시작
+        Managers.Game.StartBuildingSpawn();
+        Managers.Game.StartEnemySpawn();
+        Managers.Game.StartFoodSpawn();
+        Managers.Game.StartGoldenFoodSpawn();
+
+        Managers.Game.PlayTime = Time.time;
+
+        Managers.Game.StartScoreUpdate();
     }
 
     /// <summary>

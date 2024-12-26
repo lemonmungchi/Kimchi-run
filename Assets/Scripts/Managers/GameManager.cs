@@ -10,17 +10,78 @@ public class GameManager
     // 플레이어는 하나뿐이니까
     private GameObject _player;
 
-    // 빌딩 프리팹 리스트
-    private List<GameObject> _buildings;
+    //스폰할 오브젝트
+    private Spawner _buildingSpawner;
+    private Spawner _enemySpawner;
+    private Spawner _foodSpawner;
+    private Spawner _goldenFoodSpawner;
 
-    // 스폰된 빌딩을 관리하는 리스트 
-    private List<GameObject> _spawnedBuildings = new List<GameObject>();
+    private float playTime;
+    public int currentScore;
+    private int highScore;
 
-    // 적 프리팹 리스트
-    private List<GameObject> _enemies;
+    // 점수 변경 이벤트
+    public event System.Action<int> OnScoreChanged;
+    public event System.Action<int> OnHighScoreChanged;
 
-    // 스폰된 적을 관리하는 리스트 
-    private List<GameObject> _spawnedEnemies = new List<GameObject>();
+
+    public int CurrentScore
+    {
+        get => currentScore;
+        set
+        {
+            currentScore = value;
+            OnScoreChanged?.Invoke(currentScore);
+        }
+    }
+    public float PlayTime
+    {
+        get => playTime;
+        set => playTime = value;    
+    }
+
+    public int HighScore
+    {
+        get=> highScore;
+        set
+        {
+            highScore = value;
+            OnHighScoreChanged?.Invoke(highScore);
+        }
+    }
+  
+
+    /// <summary>
+    /// 점수를 주기적으로 업데이트하는 코루틴
+    /// </summary>
+    private IEnumerator UpdateScoreCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f); // 1초마다 실행
+            CurrentScore = Mathf.FloorToInt(Time.time - PlayTime);
+        }
+    }
+
+
+    public void SaveHighScore()
+    {
+        int currentHighScore = PlayerPrefs.GetInt("highScore");
+        if(currentScore>currentHighScore)
+        {
+            OnHighScoreChanged?.Invoke(currentScore);
+            PlayerPrefs.SetInt("highScore",HighScore);
+            PlayerPrefs.Save();
+        }
+        
+    }
+
+    public float CaculateGameSpeed()
+    {
+        float speed = 3f + (0.5f * MathF.Floor(currentScore / 10f));
+        return MathF.Min(speed, 30f);
+    }
+
 
     // SpawningPool 등에서 빌딩이 추가/삭제되는 것을 알리기 위한 이벤트
     public Action<int> OnSpawnEvent;
@@ -29,10 +90,6 @@ public class GameManager
     private float minSpawnDelay = 3f;
 
     private float maxSpawnDelay = 7f;
-
-    // 스폰 상태 플래그
-    private bool _isSpawning_Building = false;
-    private bool _isSpawning_Enemy = false;
 
     /// <summary>
     /// 플레이어를 찾기 위한 함수
@@ -54,7 +111,7 @@ public class GameManager
         switch (type)
         {
             case Define.WorldObject._buildings:
-                _spawnedBuildings.Add(go);
+                //_spawnedBuildings.Add(go);
                 break;
 
             case Define.WorldObject.Player:
@@ -63,59 +120,6 @@ public class GameManager
         }
         return go;
     }
-
-    /// <summary>
-    /// 랜덤으로 빌딩을 풀에서 가져와 생성하는 함수
-    /// </summary>
-    public void SpawnRandomEnemy()
-    {
-        // 빌딩 프리팹이 비어 있는 경우 경고
-        if (_enemies == null || _enemies.Count == 0)
-        {
-            Debug.LogWarning("적 프리팹이 없습니다!");
-            return;
-        }
-
-        // 랜덤 인덱스를 선택해 빌딩 프리팹 가져오기
-        int randomIndex = UnityEngine.Random.Range(0, _enemies.Count);
-        GameObject prefab = _enemies[randomIndex];
-
-        // 풀에서 빌딩 생성
-        Poolable poolable = Managers.Pool.Pop(prefab);
-        GameObject newEnemy = poolable.gameObject;
-
-        // 생성된 빌딩의 위치 설정
-        newEnemy.transform.position = new Vector3(13.64f, -3.9f, 20);
-
-        // 생성된 빌딩 리스트에 추가 (옵션)
-        _spawnedEnemies.Add(newEnemy);
-
-        Debug.Log($"적 생성: {newEnemy.name}");
-    }
-
-    /// <summary>
-    /// 랜덤으로 적을 풀에서 가져와 생성하는 함수
-    /// </summary>
-    public void SpawnRandomBuilding()
-    {
-        if (_buildings == null || _buildings.Count == 0)
-        {
-            Debug.LogWarning("빌딩 프리팹이 없습니다!");
-            return;
-        }
-
-        int randomIndex = UnityEngine.Random.Range(0, _buildings.Count);
-        GameObject prefab = _buildings[randomIndex];
-
-        // 풀에서 빌딩 생성
-        Poolable poolable = Managers.Pool.Pop(prefab, Managers.Pool.GetRoot());
-        GameObject newBuilding = poolable.gameObject;
-
-        // 위치 설정
-        newBuilding.transform.position = new Vector3(13.64f, -3.9f, 50);
-        Debug.Log($"빌딩 생성: {newBuilding.name}");
-    }
-
 
     /// <summary>
     /// 인자로 받은 GameObject의 타입 반환
@@ -171,80 +175,47 @@ public class GameManager
         // 씬에 존재하는 "Player" 오브젝트 찾기
         _player = GameObject.Find("Player");
 
-        // 1) 풀 프리팹들을 모두 로드
-        GameObject[] buildingPrefabs = Resources.LoadAll<GameObject>("Prefabs/Buildings");
-        _buildings = new List<GameObject>(buildingPrefabs);
+        // Spawner 초기화
+        _buildingSpawner = new Spawner("Prefabs/Buildings", "Building");
+        _buildingSpawner.InitializePool(3);
 
-        GameObject[] enemyPrefabs = Resources.LoadAll<GameObject>("Prefabs/Enemy");
-        _enemies = new List<GameObject>(enemyPrefabs);
+        _enemySpawner = new Spawner("Prefabs/Enemy", "Enemy");
+        _enemySpawner.InitializePool(3);
 
-        // 2) 오브젝트 풀 생성
-        //    (모든 빌딩 프리팹을 PoolManager에 등록, 초기 수량 3개씩)
-        foreach (GameObject buildingPrefab in buildingPrefabs)
-        {
-            Managers.Pool.CreatePool(buildingPrefab, 3);
-        }
+        _foodSpawner = new Spawner("Prefabs/Food", "Food");
+        _foodSpawner.InitializePool(5, prefab => prefab.GetComponent<Food>().GetFoodType() != FoodType.Golden_Baechu);
 
-        foreach (GameObject enemyPrefab in enemyPrefabs)
-        {
-            Managers.Pool.CreatePool(enemyPrefab, 3);
-        }
+        _goldenFoodSpawner = new Spawner("Prefabs/GoldenFood", "GoldenFood");
+        _goldenFoodSpawner.InitializePool(2, prefab => prefab.GetComponent<Food>().GetFoodType() == FoodType.Golden_Baechu);
 
-        Debug.Log($"[GameManager] Init complete! " +
-                  $"Loaded {_buildings.Count} building prefabs from 'Resources/Prefabs/'.");
-
-        StartBuildingSpawn();
-        StartEnemySpawn();
+        Debug.Log("[GameManager] Init complete!");
     }
 
-    /// <summary>
-    /// 주기적으로 빌딩을 스폰하는 코루틴 시작
-    /// </summary>
     public void StartBuildingSpawn()
     {
-        if (!_isSpawning_Building)
-            CoroutineHelper.StartCoroutine(SpawnBuildingCoroutine());
+        CoroutineHelper.StartCoroutine(_buildingSpawner.SpawnCoroutine(minSpawnDelay, maxSpawnDelay, new Vector3(16.64f, -3.9f, 50)));
     }
 
     public void StartEnemySpawn()
     {
-        if (!_isSpawning_Enemy)
-            CoroutineHelper.StartCoroutine(SpawnEnemyCoroutine());
+        CoroutineHelper.StartCoroutine(_enemySpawner.SpawnCoroutine(minSpawnDelay, maxSpawnDelay, new Vector3(13.64f, -3.9f, 20)));
+    }
+
+    public void StartFoodSpawn()
+    {
+        CoroutineHelper.StartCoroutine(_foodSpawner.SpawnCoroutine(5f, 40f, new Vector3(18f, -1.4f, 40)));
+    }
+
+    public void StartGoldenFoodSpawn()
+    {
+        CoroutineHelper.StartCoroutine(_goldenFoodSpawner.SpawnCoroutine(30f, 40f, new Vector3(30f, -1.2f, 40)));
     }
 
     /// <summary>
-    /// 빌딩 스폰을 담당하는 코루틴
+    /// 점수 업데이트 시작
     /// </summary>
-    private IEnumerator SpawnBuildingCoroutine()
+    public void StartScoreUpdate()
     {
-        _isSpawning_Building = true;
-
-        while (true)
-        {
-            // 랜덤 빌딩 생성
-            SpawnRandomBuilding();
-
-            // 다음 스폰까지 대기
-            float randomInterval = UnityEngine.Random.Range(minSpawnDelay, maxSpawnDelay);
-            yield return new WaitForSeconds(randomInterval);
-        }
-    }
-
-    /// <summary>
-    /// 빌딩 스폰을 담당하는 코루틴
-    /// </summary>
-    private IEnumerator SpawnEnemyCoroutine()
-    {
-        _isSpawning_Enemy = true;
-
-        while (true)
-        {
-            // 랜덤 빌딩 생성
-            SpawnRandomEnemy();
-
-            // 다음 스폰까지 대기
-            float randomInterval = UnityEngine.Random.Range(minSpawnDelay, maxSpawnDelay);
-            yield return new WaitForSeconds(randomInterval);
-        }
+        CoroutineHelper.StartCoroutine(UpdateScoreCoroutine());
     }
 }

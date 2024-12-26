@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4244695420944252867}
   m_Layer: 0
   m_Name: Delivery Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b642030549a2e4a9398c5c39d21c11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 1
+  _moveSpeed: 4
 --- !u!114 &784723996500113765
 MonoBehaviour:
   m_ObjectHideFlags: 0

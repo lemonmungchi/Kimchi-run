@@ -11,12 +11,14 @@ public class Managers : MonoBehaviour
     private ResourceManger _resourceManger = new ResourceManger();
     private SceneManagerEx _sceneManager = new SceneManagerEx();
     private GameManager _game = new GameManager();
+    private AudioManager _audio = new AudioManager();
 
     public static PoolManager Pool => Instance._poolManager;
     public static UIManager UI => Instance._uiManager;
     public static ResourceManger Resource => Instance._resourceManger;
     public static SceneManagerEx Scene => Instance._sceneManager;
     public static GameManager Game => Instance._game;
+    public static AudioManager Audio => Instance._audio;
 
     void Start()
     {
@@ -40,6 +42,7 @@ public class Managers : MonoBehaviour
 
         s_instance._poolManager.Init();
         s_instance._game.Init();
+        s_instance._audio.Init();
     }
 
     /// <summary>

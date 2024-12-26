@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1151774587888550946}
   m_Layer: 0
   m_Name: Halmoni
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b642030549a2e4a9398c5c39d21c11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 2
+  _moveSpeed: 3
 --- !u!114 &7537135053622259744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +169,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

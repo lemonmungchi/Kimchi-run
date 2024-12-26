@@ -22,7 +22,7 @@ public class UI_PausePopup : UI_Popup
         Bind<Button>(typeof(Buttons));
         
         GetImage((int)Images.Background).gameObject.AddUIEvent(ClosePopupUI);
-        GetButton((int)Buttons.BacktoMainMenuBtn).gameObject.AddUIEvent(BacktoMainMenu);
+        GetButton((int)Buttons.BacktoMainMenuBtn).gameObject.AddUIEvent(ClosePopupUI);
         GetButton((int)Buttons.ExitBtn).gameObject.AddUIEvent(ExitGame);
 
         Time.timeScale = 0.0f;     // 일시정지
