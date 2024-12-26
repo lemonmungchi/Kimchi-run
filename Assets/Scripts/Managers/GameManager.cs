@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager
@@ -139,12 +140,17 @@ public class GameManager
     {
         // 오브젝트 타입 확인
         Define.WorldObject type = GetWorldObjectType(go);
+        
 
         switch (type)
         {
+            
             case Define.WorldObject._buildings:
-                // 풀로 반환
+            case Define.WorldObject.Enemy:
+            case Define.WorldObject.food:
+            case Define.WorldObject.goldenfood:
                 Poolable poolable = go.GetComponent<Poolable>();
+                // 풀로 반환
                 if (poolable != null)
                 {
                     Managers.Pool.Push(poolable);
@@ -155,17 +161,19 @@ public class GameManager
                     Managers.Resource.Destroy(go);
                 }
                 break;
-
             case Define.WorldObject.Player:
                 if (_player == go)
                     _player = null;
                 break;
 
             default:
-                Managers.Resource.Destroy(go);
+                Debug.LogWarning($"[GameManager] Unknown object type: {type}");
+                Managers.Resource.Destroy(go); // 정의되지 않은 경우 Destroy
                 break;
+
         }
     }
+
 
     /// <summary>
     /// GameManager 초기화 함수
