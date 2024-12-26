@@ -26,6 +26,13 @@ public class GameManager
     public event System.Action<int> OnHighScoreChanged;
 
 
+    
+    public float PlayTime
+    {
+        get => playTime;
+        set => playTime = value;    
+    }
+
     public int CurrentScore
     {
         get => currentScore;
@@ -34,11 +41,6 @@ public class GameManager
             currentScore = value;
             OnScoreChanged?.Invoke(currentScore);
         }
-    }
-    public float PlayTime
-    {
-        get => playTime;
-        set => playTime = value;    
     }
 
     public int HighScore

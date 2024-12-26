@@ -71,7 +71,7 @@ public class UI_Game : UI_Scene
     /// 플레이어 목숨에 따라 하트 UI 업데이트
     /// </summary>
     /// <param name="currentLives">현재 목숨 수</param>
-    private void UpdateHearts(float currentLives)
+    private void UpdateHearts(int currentLives)
     {
         for (int i = 0; i < 3; i++)
         {
