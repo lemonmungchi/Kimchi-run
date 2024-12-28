@@ -62,6 +62,6 @@ public class SceneManagerEx
     /// </summary>
     public void Clear()
     {
-        CurrentScene.Clear();
+        
     }
 }

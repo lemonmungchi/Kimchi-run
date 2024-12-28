@@ -58,6 +58,7 @@ public class GameScene : BaseScene
     /// </summary>
     public override void Clear()
     {
+        Managers.Clear();
         // 게임 씬에서 필요한 정리 작업을 여기에 구현.
         // 예를 들어, 씬 전환 시에 특정 게임 오브젝트를 파괴하거나,
         // Managers 등을 통해 설정된 데이터를 초기화할 수 있음.

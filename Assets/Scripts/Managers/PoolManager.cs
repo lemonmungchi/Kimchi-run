@@ -141,13 +141,21 @@ public class PoolManager
     /// <param name="count">Pool의 크기</param>
     public void CreatePool(GameObject original, int count = 10)
     {
+        // 중복 키 추가 방지
+        if (_pool.ContainsKey(original.name))
+        {
+            Debug.LogWarning($"Pool for {original.name} already exists. Skipping creation.");
+            return; // 이미 해당 풀이 존재하면 생성하지 않음
+        }
+
         Pool pool = new Pool();
         pool.Init(original, count);
         pool.Root.parent = _root;
-        
+
         _pool.Add(original.name, pool);
     }
-    
+
+
     /// <summary>
     /// 사용이 끝난 Poolable 오브젝트를 Pool에 집어넣는 함수.
     /// </summary>

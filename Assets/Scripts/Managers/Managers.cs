@@ -1,10 +1,11 @@
 using UnityEngine;
+using static Define;
 
 [DefaultExecutionOrder(0)]
 public class Managers : MonoBehaviour
 {
-    static Managers s_instance; // À¯ÀÏÇÑ ÀÎ½ºÅÏ½º¸¦ ´ãÀ» º¯¼ö.
-    static Managers Instance { get { Init(); return s_instance; } } // À¯ÀÏÇÑ ÀÎ½ºÅÏ½º¸¦ ÂüÁ¶ÇÏ´Â property
+    static Managers s_instance; // ìœ ì¼í•œ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë‹´ì„ ë³€ìˆ˜.
+    static Managers Instance { get { Init(); return s_instance; } } // ìœ ì¼í•œ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì°¸ì¡°í•˜ëŠ” property
 
     private PoolManager _poolManager = new PoolManager();
     private UIManager _uiManager = new UIManager();
@@ -28,7 +29,7 @@ public class Managers : MonoBehaviour
 
     static void Init()
     {
-        // s_instance°¡ nullÀÏ ¶§¸¸ Managers¸¦ Ã£¾Æ Instance¿¡ ÇÒ´ç
+        // s_instanceê°€ nullì¼ ë•Œë§Œ Managersë¥¼ ì°¾ì•„ Instanceì— í• ë‹¹
         if (s_instance != null) return;
 
         GameObject go = GameObject.Find("@Managers");
@@ -40,17 +41,20 @@ public class Managers : MonoBehaviour
         DontDestroyOnLoad(go);
         s_instance = go.GetComponent<Managers>();
 
-        s_instance._poolManager.Init();
-        s_instance._game.Init();
-        s_instance._audio.Init();
+        
     }
 
     /// <summary>
-    /// SceneÀ» ÀÌµ¿ÇÒ ¶§ È£ÃâÇØ¾ß ÇÏ´Â ÇÔ¼ö.
+    /// Sceneì„ ì´ë™í•  ë•Œ í˜¸ì¶œí•´ì•¼ í•˜ëŠ” í•¨ìˆ˜.
     /// </summary>
     public static void Clear()
     {
+        Audio.Clear();
 
+        UI.Clear();
+        Scene.Clear();
+
+        Pool.Clear();       // ì˜ë„ì ìœ¼ë¡œ ë§ˆì§€ë§‰ì— Clear. ì™œ? ë‹¤ë¥¸ Managerì—ì„œ pool ì˜¤ë¸Œì íŠ¸ë¥¼ ì‚¬ìš©í•  ìˆ˜ ìˆê¸° ë•Œë¬¸.
     }
 
     private void OnApplicationQuit()
