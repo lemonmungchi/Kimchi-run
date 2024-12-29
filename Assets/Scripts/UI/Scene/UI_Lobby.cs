@@ -46,11 +46,7 @@ public class UI_Lobby : UI_Scene
 
     void NewGame(PointerEventData data)
     {
-        Managers.Pool.Init();
-        Managers.Game.Init();
-        Managers.Audio.Init();
-        Managers.Scene.ChangeScene(Define.Scene.GameScene);
-        Managers.Game.thisGameis = Define.ThisGameis.NewGame;
+        Managers.UI.ShowPopupUI<UI_CharacterSel>();
     }
 
     public void ExitGame(PointerEventData data)

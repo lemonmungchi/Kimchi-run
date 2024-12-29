@@ -26,9 +26,20 @@ public class GameScene : BaseScene
         // 이 데이터는 게임 내에서 캐릭터의 능력치 등을 관리하는 데 사용될 수 있음.
         // Dictionary<int, Data.Stat> dict = Managers.Data.StatDict;
 
-        SpawnPlayer();
+        //SpawnPlayer();
 
         Managers.UI.ShowSceneUI<UI_Game>();
+
+        //SpawnPlayerB();
+
+        if (!Managers.Game.isPlayerB)
+        {
+            SpawnPlayer();
+        }
+        else
+        {
+            SpawnPlayerB();
+        }
 
         // 스폰 시작
         Managers.Game.StartBuildingSpawn();
@@ -50,6 +61,22 @@ public class GameScene : BaseScene
         GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "Player");
         player.transform.position = new Vector3(-7.18f, -3.28f, -10);
     }
+
+    public void SpawnPlayerB()
+    {
+        // PlayerB 생성
+        GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerB");
+        player.transform.position = new Vector3(-7.18f, -3.28f, -10);
+
+        // 캐릭터가 항상 오른쪽을 바라보도록 설정
+        Vector3 directedToRight = new Vector3(Mathf.Abs(player.transform.localScale.x)*-1, player.transform.localScale.y, player.transform.localScale.z);
+        player.transform.localScale = directedToRight; // localScale 설정
+
+
+        // PlayerB의 하트를 4개로 설정
+        player.GetComponent<Player>().CurrentLives = 4;
+    }
+
 
     /// <summary>
     /// 씬이 전환될 때 필요한 정리 작업을 수행하는 메서드.

@@ -113,7 +113,7 @@ public class Player : MonoBehaviour
     }
 
     // Fields
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpForce = 10;
     [SerializeField] private int currentLives = 3;
 
     private Rigidbody2D rb;

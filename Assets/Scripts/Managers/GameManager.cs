@@ -20,6 +20,7 @@ public class GameManager
     private float playTime;
     public int currentScore;
     private int highScore;
+    public bool isPlayerB = false;
 
     // 점수 변경 이벤트
     public event System.Action<int> OnScoreChanged;
@@ -63,6 +64,10 @@ public class GameManager
         {
             yield return new WaitForSeconds(1f); // 1초마다 실행
             CurrentScore = Mathf.FloorToInt(Time.time - PlayTime);
+            if(Managers.Game.isPlayerB)
+            {
+                CurrentScore += 2;
+            }
         }
     }
 
@@ -199,6 +204,16 @@ public class GameManager
         _goldenFoodSpawner.InitializePool(2, prefab => prefab.GetComponent<Food>().GetFoodType() == FoodType.Golden_Baechu);
 
         Debug.Log("[GameManager] Init complete!");
+    }
+
+    public void StartPlayer()
+    {
+        isPlayerB = false;
+    }
+
+    public void StartPlayerB()
+    {
+        isPlayerB = true;
     }
 
     public void StartBuildingSpawn()
